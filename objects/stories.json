@@ -1,0 +1,50 @@
+[
+  {
+    "qProperty": {
+      "qInfo": {
+        "qId": "a2c411b4-c72d-4685-9e2d-25148370fea1",
+        "qType": "story"
+      },
+      "qMetaDef": {
+        "title": "Minha nova história",
+        "description": ""
+      },
+      "rank": -1,
+      "thumbnail": {
+        "qStaticContentUrlDef": {}
+      },
+      "qChildListDef": {
+        "qData": {
+          "title": "/title",
+          "rank": "/rank"
+        }
+      }
+    },
+    "qChildren": [
+      {
+        "qProperty": {
+          "qInfo": {
+            "qId": "EHJLmj",
+            "qType": "slide"
+          },
+          "qMetaDef": {},
+          "rank": 0,
+          "qChildListDef": {
+            "qData": {
+              "title": "/title",
+              "sheetId": "/sheetId",
+              "ratio": "/ratio",
+              "position": "/position",
+              "dataPath": "/dataPath",
+              "srcPath": "/srcPath",
+              "visualization": "/visualization",
+              "visualizationType": "/visualizationType",
+              "style": "/style"
+            }
+          }
+        },
+        "qChildren": []
+      }
+    ]
+  }
+]

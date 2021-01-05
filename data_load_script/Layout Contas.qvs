@@ -1,0 +1,166 @@
+///$tab Layout Contas
+//Define se a conta entra negativa ou positiva, caso ela não estejá no excel, o padrão é vir negativo
+MapOrdenacaoNnivel1:
+MAPPING
+LOAD
+    UPPER(trim("Nivel 1")),
+    [Ordenacao 1]
+FROM [lib://1.Arquivos/Planilha/Descricao Contas_Condominio.xlsx]
+(ooxml, embedded labels, table is Ordenação);
+
+//Define se a conta entra negativa ou positiva, caso ela não estejá no excel, o padrão é vir negativo
+MapOrdenacaoNnivel2:
+MAPPING
+LOAD
+    UPPER(trim("Nivel 2")),
+    [Ordenacao 2]
+FROM [lib://1.Arquivos/Planilha/Descricao Contas_Condominio.xlsx]
+(ooxml, embedded labels, table is Ordenação);
+
+//Define a cor do nível 1
+MapCorFundoNivel1:
+MAPPING
+LOAD
+    UPPER(trim("Nivel 1")),
+    [Cor Fundo]
+FROM [lib://1.Arquivos/Planilha/Descricao Contas_Condominio.xlsx]
+(ooxml, embedded labels, table is Ordenação);
+	
+    
+MapCorFonteNivel1:
+MAPPING
+LOAD
+    UPPER(trim("Nivel 1")),
+    [Cor Fonte]
+FROM [lib://1.Arquivos/Planilha/Descricao Contas_Condominio.xlsx]
+(ooxml, embedded labels, table is Ordenação);
+
+MapCorCondicional:
+MAPPING
+LOAD
+    UPPER(trim("Nivel 1")),
+    IF("Cor Condicional"='Maior Melhor',1,
+    IF("Cor Condicional"='Menor Melhor',-1,
+    0))
+FROM [lib://1.Arquivos/Planilha/Descricao Contas_Condominio.xlsx]
+(ooxml, embedded labels, table is Ordenação);
+
+
+
+tempTabLayout:
+LOAD
+	1	AS	Multiplicador,
+    TEXT(NumeroContaTemp&if(Repetida=1,Nivel1,''))	AS	NumeroConta,//Campo será renomeado depois
+	*
+;
+LOAD
+	1							AS	FlagContaOriginal,
+    upper(text(Chave))			AS	Chave,
+    Repetida,
+    text(trim(NumeroConta))		AS	NumeroContaTemp,
+    upper(trim("Nível 3"))		AS	Nivel3,
+    upper(trim("Nivel 2"))		AS	Nivel2,
+    upper(trim("Nivel 1"))		AS	Nivel1,
+  	'SOMA'						AS	TipoCalculo
+FROM [lib://1.Arquivos/Planilha/Descricao Contas_Condominio.xlsx]
+(ooxml, embedded labels, table is [Definição Conta]);
+DROP FIELD NumeroContaTemp,Repetida;
+
+
+
+
+//Carrega as contas personalizadas
+TabContasPersonalizadas:
+LOAD
+	'SOMA'									AS	TipoCalculo,
+	upper("Descricao do calculo Nivel 1")	AS	Nivel1,
+   	upper(trim("Contas Nível 1"))			AS	LinkSubContas,
+    Multiplicador//Link entre as contas padrão e as personalizadas
+FROM [lib://1.Arquivos/Planilha/Descricao Contas_Condominio.xlsx]
+(ooxml, embedded labels, header is 1 lines, table is [Contas Personalisadas]);
+
+//Definição de contas que são percentual
+CONCATENATE(TabContasPersonalizadas)
+LOAD
+	'PERCENTUAL'							AS	TipoCalculo,
+    'Numerador'								AS	TipoContaDivisão,//Define se o 
+    UPPER("Descricao do calculo Nivel 11")	AS	Nivel1,
+    UPPER(Numerador)						AS	LinkSubContas,
+    [Multiplicador Numerador]				AS	Multiplicador
+FROM [lib://1.Arquivos/Planilha/Descricao Contas_Condominio.xlsx]
+(ooxml, embedded labels, header is 1 lines, table is [Contas Personalisadas])
+WHERE
+	NOT ISNULL(Numerador) AND Numerador <>'';
+//Definição de contas que são percentual
+CONCATENATE(TabContasPersonalizadas)
+LOAD
+	'PERCENTUAL'							AS	TipoCalculo,
+    'Denominador'							AS	TipoContaDivisão,//Define se o 
+     UPPER("Descricao do calculo Nivel 11")	AS	Nivel1,
+     UPPER(Denominador)						AS	LinkSubContas,
+     [Multiplicador Denominador]			AS	Multiplicador
+FROM [lib://1.Arquivos/Planilha/Descricao Contas_Condominio.xlsx]
+(ooxml, embedded labels, header is 1 lines, table is [Contas Personalisadas])
+WHERE
+	NOT ISNULL(Denominador) AND Denominador <>'';
+
+
+//Incluia as contas/multiplicador, dos níveis personalizados
+LEFT JOIN(TabContasPersonalizadas)
+LOAD
+	Nivel1 as LinkSubContas,//Link entre as contas padrão e as personalizadas
+   	'TOTAL'	AS	Nivel2,
+    'TOTAL'	AS	Nivel3,
+	
+    //Nivel1	AS	Nivel2,
+	//Nivel2	AS	Nivel3,
+
+    NumeroConta,
+    Chave
+RESIDENT 
+	tempTabLayout
+;
+
+CONCATENATE(tempTabLayout)
+LOAD
+	*,
+    1	//CampoParaNaoConcatenar
+RESIDENT
+	TabContasPersonalizadas
+;
+
+DROP TABLE TabContasPersonalizadas;
+
+TabLayout:
+LOAD
+	*,
+    IF(WildMatch(Nivel1,'*%*'),1,0)	AS	FlagConta%,
+    hash128(Chave,NumeroConta)		AS	%LinkLayout,
+    ApplyMap('MapCorFundoNivel1',Nivel1,'')	AS	CorNivel1,
+    ApplyMap('MapCorFonteNivel1',Nivel1,'')	AS	CorFonteNivel1,
+    ApplyMap('MapOrdenacaoNnivel1',Nivel1)	AS [Ordenacao 1],
+    ApplyMap('MapOrdenacaoNnivel2',Nivel2)	AS [Ordenacao 2],
+    ApplyMap('MapCorCondicional',Nivel1)	AS	MultiplicadorCor
+RESIDENT
+	tempTabLayout
+;
+
+DROP TABLE tempTabLayout;
+
+CONCATENATE(TabLayout)
+LOAD	DISTINCT
+	hash128(Nivel1,Nivel2,Nivel3)	AS	%LinkLayout,
+    FlagConta%,
+    Multiplicador,
+    TipoCalculo,
+    TipoContaDivisão,
+	Nivel1,
+    Nivel2,
+    Nivel3,
+	CorNivel1
+RESIDENT
+	TabLayout
+;
+
+
+DROP FIELD Chave,NumeroConta;

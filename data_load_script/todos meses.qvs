@@ -1,0 +1,17 @@
+///$tab todos meses
+//Faz com que todas as contas fiquem vinculadas com todos os meses.( para aparecerem zeradas no painel no RMD)
+
+CONCATENATE(FatoRMD)
+LOAD	DISTINCT
+//    Luc,
+//    DeparaLuc,
+    GrupoConta,
+    NumeroConta,
+    0.000001	AS Valor,
+    %LinkLayout,
+    AddMonths((DATE#('01/01/2019','DD/MM/YYYY')),iterno()-1)	as	Data
+RESIDENT
+	FatoRMD
+WHILE
+	AddMonths((DATE#('01/01/2019','DD/MM/YYYY')),iterno()-1) <= MonthStart(TODAY())
+;

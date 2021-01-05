@@ -1,0 +1,346 @@
+///$tab Extract
+LIB CONNECT TO 'VS_UAU';
+
+RMD_Faturamento:
+SQL  
+SELECT DISTINCT 
+	CON.NCON, 
+	CON.DCON, 
+	CON.XFANCON, 
+	LUC.NLUC, 
+	LUC.QABLLUC, 
+	EMP.NEMP, 
+	EMP.XEMP, 
+	EPR.NCODEPR, 
+	EPR.XRAZSOCEPR, 
+	INC.NCODGRC,
+	INC.VENCINC,
+	INC.NCONREDPLC,
+	LUC.STLUC,
+	STL.XSTLUC,
+	INC.AINC,
+	INC.MINC   	
+FROM             
+	CON_CON CON 
+	RIGHT OUTER JOIN CTA_INC INC ON               INC.NCON = CON.NCON AND              INC.DCON = CON.DCON 
+	INNER JOIN       MIX_LUC LUC ON               LUC.NLUC = INC.NLUC 
+	LEFT OUTER JOIN  MIX_STL STL ON               STL.STLUC = LUC.STLUC 
+	INNER JOIN       MIX_EMP EMP ON               LUC.NEMP = EMP.NEMP 
+	INNER JOIN       MIX_EPS EPS ON               EMP.NEMP = EPS.NEMP 
+	INNER JOIN       MIX_EPR EPR ON               EPS.NCODEPR = EPR.NCODEPR 
+WHERE            
+	1=1
+	AND              INC.NCODGRC+INC.NCONREDPLC IN ('10200101', '10200102', '10200103', '10200112', '10300100', '10300101', '10400001', '10400100', '20200001', '20200003', '20200004', '20200006', '20200007', '20200010', '20200019', '20900003', '20900004') 
+	AND              LUC.STLUC IN ('AN', 'DP', 'LO', 'MD', 'ML', 'MR', 'PA', 'QP', 'QT')
+;
+
+Store RMD_Faturamento into [lib://2.Extract/RMD_Faturamento.qvd];
+drop table RMD_Faturamento ;
+
+RMD_Recebimento:
+SELECT
+	'01' AS FLAG,
+	CRS.NCON,
+	CRS.DCON,
+	CRS.XFANLOJ AS FANTASIA,
+	CRS.XNOMLOJ AS RAZAO,
+	CRS.NLUC 	AS LUC,
+	CRS.ACRS,
+	CRS.MCRS,
+	CRS.NCORCRS AS CORR,
+	CRS.NCODORG AS ORIGEM,
+	CRS.NRECCRS AS NREC,
+	CRS.NSEQCRS AS NSEQ,
+	CRS.NPARCRS AS NPAR,
+	CRS.IVNCCRS AS DIAVENC,
+	CRS.MVNCCRS AS MESVENC,
+	CRS.AVNCCRS AS ANOVENC,
+	CRS.ICRECRS,
+	CRS.MCRECRS,
+	CRS.ACRECRS,
+	CRS.NCODPRT AS PORT,
+	PRT.XDSCPRT AS XPORT,
+	CRS.NEMP AS NEMP,
+	EMP.XEMP AS XEMP,
+	CRS.NRDBCRS AS RDB,
+	SUM(CRI.VPRIPAGCRI) AS VPRIPAGCRI,
+	SUM(CRI.VJRSPAGCRI) AS VJRSPAGCRI,
+	SUM(CRI.VMLTPAGCRI) AS VMLTPAGCRI,
+	SUM(CRI.VCRMPAGCRI) AS VCRMPAGCRI,
+    SUM(CRI.VPRIDEVCRI) AS VPRIDEVCRI,
+	CASE WHEN SUM(CRI.VPRIDEVCRI) > SUM(CRI.VPRIPAGCRI)
+	AND CRI.FTIPCRI ='T'THEN SUM(CRI.VPRIDEVCRI) - SUM(CRI.VPRIPAGCRI)
+	ELSE 0 END AS VALDES,
+	PLC.NCODGRCPLC AS NCODGRCPLC,
+	PLC.NCODPLC AS NCODPLC,
+	PLC.XDSCPLC AS XCONTA,
+	CRS.NPARBAICRS AS PARBAI,
+	CRS.NCODPRV AS CODPRV,
+	PRV.XDSCPRV AS PROVID,
+	CRS.XOBS AS OBSERV
+FROM 
+	CRS_CRS CRS
+LEFT OUTER JOIN MIX_EMP EMP ON
+	CRS.NEMP = EMP.NEMP
+LEFT OUTER JOIN CRS_PRT PRT ON
+	CRS.NCODPRT = PRT.NCODPRT
+LEFT OUTER JOIN CRS_PRV PRV ON
+	CRS.NCODPRV = PRV.NCODPRV
+INNER JOIN CRS_CRI CRI ON
+	CRS.NCODORG = CRI.NCODORG
+	AND CRS.ACRS = CRI.ACRS
+	AND CRS.MCRS = CRI.MCRS
+	AND CRS.NRECCRS = CRI.NRECCRS
+	AND CRS.NSEQCRS = CRI.NSEQCRS
+	AND CRS.NPARCRS = CRI.NPARCRS
+INNER JOIN CRS_PLC PLC ON
+	CRI.NCODPLC = PLC.NCODPLC
+	AND CRI.NCODORG = PLC.NCODORGPLC
+INNER JOIN CRS_GRC GRC ON
+	PLC.NCODGRCPLC = GRC.NCODGRC
+WHERE
+	CRS.FTIPCRS ='P'
+	AND CRS.NCODORG ='RECI'
+//     	AND CRS.NCON  = '00623'
+// 	AND	CRS.ACRS  = 2020
+// 	AND CRS.MCRS  = '03'
+GROUP BY
+	CRS.NCON,
+	CRS.DCON,
+	CRS.XFANLOJ,
+	CRS.XNOMLOJ,
+	CRS.NLUC,
+	CRS.ACRS,
+	CRS.MCRS,
+	CRS.NCORCRS,
+	CRS.NCODORG,
+	CRS.NRECCRS,
+	CRS.NSEQCRS,
+	CRS.NPARCRS,
+	CRS.IVNCCRS,
+	CRS.MVNCCRS,
+	CRS.AVNCCRS,
+	CRS.ICRECRS,
+	CRS.MCRECRS,
+	CRS.ACRECRS,
+	CRS.NCODPRT,
+	PRT.XDSCPRT,
+	CRS.NEMP,
+	EMP.XEMP,
+	CRS.NRDBCRS,
+	CRS.NPARBAICRS,
+	CRS.NCODPRV,
+	PRV.XDSCPRV,
+	CRS.XOBS ,
+	CRI.FTIPCRI ,
+	PLC.NCODPLC,
+	PLC.XDSCPLC ,
+	PLC.NCODGRCPLC,
+	GRC.XDSCGRC
+;
+
+Store RMD_Recebimento into [lib://2.Extract/RMD_Recebimento.qvd];
+drop table RMD_Recebimento ;
+
+
+Fat_RecebimentoEstacio:
+SELECT
+                Recebimentos.Empresa_Rec,
+                Recebimentos.Desc_Emp,
+                Recebimentos.Obra_Rec,
+                Recebimentos.Descr_Obr,
+                Recebimentos.NumVend_Rec,
+                Recebimentos.Cliente_Rec,
+                Recebimentos.Nome,
+                CAST(Recebimentos.Cliente_Rec AS VARCHAR) + ' - ' + UPPER(Recebimentos.Nome)                 AS Cliente,
+                Recebimentos.NumParc_Rec,
+                Recebimentos.Tipo_Rec,
+                Recebimentos.NumParcGer_Rec,
+                Recebimentos.DataVenci_Rec,
+                Recebimentos.[DATA]                                                                                                                                                                                                                                                            AS Data_Rec,
+                Recebimentos.Banco_rec,
+                Recebimentos.NomeBanco,
+                Recebimentos.Conta_rec,
+                Recebimentos.Descri_Banco                                                                                                                                                                                                                                AS DescrConta,
+                Recebimentos.VlrParcela_Rec,
+                Recebimentos.VlrPrincipal_Rec,
+                Recebimentos.VlrCorrecao_Rec,
+                Recebimentos.VlrJuros_Rec,
+                Recebimentos.VlrMultaAtr_Rec,
+                Recebimentos.VlrJurosAtr_Rec,
+                Recebimentos.VlrCorrecaoAtr_Rec,
+                Recebimentos.VlrAcresDesconto_Rec,
+                Recebimentos.TipoRecebimento,
+                UPPER(ObraBlocoEtapa.Descr_obe)                                                                                                                                                                                                                  AS Bloco,
+                CASE
+                               WHEN Recebimentos.Qtde_Itr > 1 THEN 'VÁRIOS'
+        ELSE CAST(Recebimentos.Produto_Itr AS VARCHAR)
+    END                                                                                                                                                                                                                                                                                                                            AS CodProd,
+    CASE 
+                               WHEN Recebimentos.Qtde_Itr > 1 THEN 'VÁRIOS'
+                               ELSE UPPER(PrdSrv.Descricao_Psc)
+                END                                                                                                                                                                                                                                                                                                                                 AS DescrProd,
+                CASE 
+                               WHEN Recebimentos.Qtde_Itr > 1 THEN 'VÁRIOS'
+                               ELSE ISNULL(UPPER(UnidadePer.Identificador_Unid) ,'')
+                END                                                                                                                                                                                                                                                                                                                                 AS Identificador,
+                CASE 
+                               WHEN MONTH(Recebimentos.DATA) < 10 THEN '0'
+                               ELSE ''
+                END + CAST(MONTH(Recebimentos.DATA) AS VARCHAR) + '/' + CAST(YEAR(DATA) AS VARCHAR)        AS MesAno,
+                YEAR(Recebimentos.DATA)                                                                                                                                                                                                                                                  AS Ano,
+                CAST('06/01/2020' AS DATETIME)                                                                                                                                                                                                                        AS DataIni,
+                CAST('06/30/2020' AS DATETIME)                                                                                                                                                                                                                        AS DataTerm,
+                3                                                                                                                                                                                                                                                                                                      AS PorDataDe,
+                TotParc_Rec,
+                Recebimentos.JurCompJurAtrMulta_Rec,
+                Recebimentos.TotalCorrecao_Rec,
+                PrdSrv.Descricao_psc,
+                UnidadePer.Identificador_unid,
+                C11_Unid                                                                                                                                                                                                                                       AS CampoPer,
+                Recebimentos.DescricaoParcela
+FROM (
+                SELECT 
+                               Recebidas.Empresa_Rec,
+                               UPPER(Empresas.Desc_emp)                                                                                                                                                                               AS Desc_Emp,
+                               Recebidas.Obra_Rec,
+                               UPPER(Obras.descr_obr)                                                                                                                                                                                                        AS Descr_Obr,
+                               Recebidas.NumVend_Rec,
+                               Recebidas.NumParc_Rec,
+                               Recebidas.Tipo_Rec,
+                               Recebidas.NumCtp_Rec,
+                               Recebidas.NumParcGer_Rec,
+                               Recebidas.DataVenci_Rec,
+                               Recebidas.Cliente_Rec,
+                               UPPER(Pessoas.nome_pes)                                                                                                                                                                                                  AS Nome,
+                               ISNULL(RecebePgto.BancoDep_Rpg,0)                                                                                                                                                            AS Banco_rec,
+                               ISNULL(Bancos.Nome_banco,'')                                                                                                                                                                          AS NomeBanco,
+                               ISNULL(RecebePgto.ContaDep_Rpg,0)                                                                                                                                              AS Conta_rec,
+                               ISNULL(CCorrente.Descri_banco,'')                                                                                                                                                     AS Descri_Banco,
+                               SUM(RecebePgtoDiv.PercentValor_Rpd)                                                                                                                                                        AS VlrParcela_Rec,
+                               SUM(RecebePgtoDiv.PercentPrinc_Rpd)                                                                                                                                                        AS VlrPrincipal_Rec,
+                               SUM(RecebePgtoDiv.PercentCorr_Rpd)                                                                                                                                                          AS VlrCorrecao_Rec,
+                               SUM(RecebePgtoDiv.PercentJurComp_Rpd)                                                                                                                                 AS VlrJuros_Rec,
+                               SUM(RecebePgtoDiv.PercentJurAtr_Rpd)                                                                                                                                       AS VlrJurosAtr_Rec,
+                               SUM(RecebePgtoDiv.PercentMultaAtr_Rpd)                                                                                                                                 AS VlrMultaAtr_Rec,
+                               SUM(RecebePgtoDiv.PercentCorrAtr_Rpd)                                                                                                                                    AS VlrCorrecaoAtr_Rec,
+                               SUM(RecebePgtoDiv.PercentCorr_Rpd + RecebePgtoDiv.PercentCorrAtr_Rpd)             AS TotalCorrecao_Rec,
+                               SUM(RecebePgtoDiv.PercentJurComp_Rpd + RecebePgtoDiv.PercentJurAtr_Rpd + RecebePgtoDiv.PercentMultaAtr_Rpd)               AS JurCompJurAtrMulta_Rec,
+                               SUM(RecebePgtoDiv.PercentAcres_Rpd + RecebePgtoDiv.PercentTaxaBol_Rpd - RecebePgtoDiv.PercentDesc_Rpd - RecebePgtoDiv.PercentDescontoCusta_Rpd - RecebePgtoDiv.PercentDescontoImposto_Rpd) AS VlrAcresDesconto_Rec,
+                               MAX(RecebePgto.Tipo_Rpg)                                                                                                                                                                                AS TipoRecebimento,
+                               Recebidas.TotParc_Rec,
+                               CASE  3
+                                               WHEN 1 THEN Recebidas.Data_Rec
+                                               WHEN 2 THEN RecebePgto.DataDep_Rpg
+                                               WHEN 3 THEN RecebePgto.DataConciliacao_Rpg
+                               END                                                                                                                                                                                                                                                                                 AS DATA,
+                               UPPER(
+                                               CASE 
+                                                               WHEN Recebidas.Tipo_Rec = '1' THEN CustasTipo.Descr_Ctp
+                                                               ELSE Parcelas.Descricao_Par
+                                               END
+                               )                                                                                                                                                                                                                                                                                        AS DescricaoParcela,
+                               
+                               ItensRecebidas.Qtde_Itr,
+                               ItensRecebidas.Produto_Itr,
+                               ItensRecebidas.CodPerson_Itr
+                FROM Recebidas
+                INNER JOIN RecebePgtoDiv
+                               ON RecebePgtoDiv.Empresa_Rpd = Recebidas.Empresa_rec
+                               AND RecebePgtoDiv.Obra_Rpd = Recebidas.Obra_Rec
+                               AND RecebePgtoDiv.NumVend_Rpd = Recebidas.NumVend_Rec
+                               AND RecebePgtoDiv.NumParc_Rpd = Recebidas.NumParc_Rec
+                               AND RecebePgtoDiv.NumParcGer_Rpd = Recebidas.NumParcGer_Rec
+                               AND RecebePgtoDiv.Tipo_Rpd = Recebidas.Tipo_Rec
+                               AND RecebePgtoDiv.ParcType_Rpd = Recebidas.ParcType_Rec
+                INNER JOIN RecebePgto
+                               ON RecebePgto.Empresa_rpg = RecebePgtoDiv.Empresa_Rpd 
+                               AND RecebePgto.NumReceb_Rpg = RecebePgtoDiv.NumReceb_Rpd 
+                               AND RecebePgto.Tipo_Rpg = RecebePgtoDiv.TipoRpg_Rpd 
+                               AND RecebePgto.NumCont_Rpg = RecebePgtoDiv.NumCont_Rpd
+                INNER JOIN (
+                               SELECT Item [BancoConta]
+                               FROM fn_SplitForTable('-1|1-1,94|1004077-3,94|1004077-3A,237|0132419-5,237|0500321-0,237|2197-0,237|2197-0A,237|2198-9,237|2198-9P,237|2199-7,237|2199-7A,237|500364-4,237|500364-4A,237|500364-4TC,237|501365-8,237|2203-9,341|27837-3,341|01653-4,341|27934-8,422|580759-1,422|580759-1A,422|580759-1P,756|01839-2,756|1839-2,756|1839-2A,756|51446-2,756|52535-9,756|01885-6,756|1885-6,756|021543-0,756|21543-0,900|9000-2,900|9000-1,900|9000-0,1000|1000-1,1111|18-0,1111|20-0,1111|000001-0',',') 
+                               UNION
+                               SELECT '0|0' [BancoConta]
+                ) [BancoConta] 
+                               ON BancoConta = CAST(ISNULL(RecebePgto.BancoDep_Rpg , 0) AS VARCHAR) + '|' + ISNULL(RecebePgto.ContaDep_Rpg , '0')
+                INNER JOIN Obras
+                               ON Obras.Empresa_obr = Recebidas.Empresa_rec
+                               AND Obras.cod_obr = Recebidas.Obra_Rec
+                INNER JOIN Empresas
+                               ON Empresas.Codigo_emp = Obras.Empresa_obr
+                INNER JOIN Pessoas
+                               ON Pessoas.cod_pes = Recebidas.Cliente_Rec
+                LEFT JOIN CCorrente
+                               ON CCorrente.Empresa_banco = RecebePgto.Empresa_rpg
+                               AND CCorrente.Numero_banco = RecebePgto.BancoDep_Rpg
+                               AND CCorrente.Conta_banco = RecebePgto.ContaDep_Rpg
+                LEFT JOIN Bancos
+                               ON Bancos.Numero_banco = CCorrente.Numero_banco
+                LEFT JOIN Parcelas
+                               ON Parcelas.Tipo_par = Recebidas.Tipo_Rec
+                LEFT JOIN CustasTipo
+                               ON CustasTipo.Num_Ctp = Recebidas.NumCtp_Rec
+                LEFT JOIN (
+                              SELECT 
+                                               ItensRecebidas.Empresa_Itr,
+                                              ItensRecebidas.Obra_Itr,
+                                              ItensRecebidas.NumVend_Itr,
+                                              ItensRecebidas.Produto_Itr,
+                                              MAX(ItensRecebidas.CodPerson_Itr)   AS CodPerson_Itr,
+                                              MaiorProd.Qtde_Max                                                                 AS Qtde_Itr
+                              FROM ItensRecebidas
+                              INNER JOIN (
+                                              SELECT 
+                                                               ItensRecebidas.Empresa_Itr                                     AS Empresa_Max,
+                                                              ItensRecebidas.Obra_Itr                                                            AS Obra_Max,
+                                                              ItensRecebidas.NumVend_Itr                                 AS NumVend_Max,
+                                                              MAX(ItensRecebidas.Produto_Itr)                        AS Produto_Max,
+                                                              COUNT(ItensRecebidas.NumVend_Itr)               AS Qtde_Max
+                                              FROM ItensRecebidas
+                                              GROUP BY ItensRecebidas.Empresa_Itr, ItensRecebidas.Obra_Itr, ItensRecebidas.NumVend_Itr
+                              ) MaiorProd
+                                              ON MaiorProd.Empresa_Max = ItensRecebidas.Empresa_Itr
+                                               AND MaiorProd.Obra_Max = ItensRecebidas.Obra_Itr 
+                                               AND MaiorProd.NumVend_Max = ItensRecebidas.NumVend_Itr 
+                                               AND MaiorProd.Produto_Max = ItensRecebidas.Produto_Itr
+                              GROUP BY ItensRecebidas.Empresa_Itr, ItensRecebidas.Obra_Itr, ItensRecebidas.NumVend_Itr, ItensRecebidas.Produto_Itr, MaiorProd.Qtde_Max
+                ) ItensRecebidas
+                               ON ItensRecebidas.Empresa_Itr = Recebidas.Empresa_rec
+                               AND ItensRecebidas.Obra_Itr = Recebidas.Obra_Rec
+                               AND ItensRecebidas.NumVend_Itr = Recebidas.NumVend_Rec
+                WHERE RecebePgto.Status_Rpg <> 2
+//                                AND 
+//                                                CASE  3
+//                                                                WHEN 1 THEN Recebidas.Data_Rec
+//                                                                WHEN 2 THEN RecebePgto.DataDep_Rpg
+//                                                                WHEN 3 THEN RecebePgto.DataConciliacao_Rpg
+//                                                END BETWEEN '06/01/2020' AND '06/30/2020'
+                GROUP BY Recebidas.Empresa_rec, Empresas.Desc_emp, Recebidas.Obra_Rec, Obras.descr_obr, Recebidas.NumVend_Rec, Recebidas.NumParc_Rec, Recebidas.Tipo_Rec, Recebidas.NumCtp_Rec, Recebidas.NumParcGer_Rec,
+                               Recebidas.DataVenci_Rec, Recebidas.Cliente_Rec, Pessoas.nome_pes, RecebePgto.BancoDep_Rpg, Bancos.Nome_banco, RecebePgto.ContaDep_Rpg, CCorrente.Descri_banco, Recebidas.TotParc_Rec,  CustasTipo.Descr_Ctp,
+                               Parcelas.Descricao_par, ItensRecebidas.Qtde_Itr, ItensRecebidas.Produto_Itr, ItensRecebidas.CodPerson_Itr, 
+                               CASE  3
+                                               WHEN 1 THEN Recebidas.Data_Rec
+                                               WHEN 2 THEN RecebePgto.DataDep_Rpg
+                                               WHEN 3 THEN RecebePgto.DataConciliacao_Rpg
+                               END 
+) AS Recebimentos
+LEFT JOIN UnidadePer
+                ON UnidadePer.Empresa_unid = Recebimentos.Empresa_Rec
+                AND UnidadePer.Prod_unid = Recebimentos.Produto_Itr
+                AND UnidadePer.NumPer_unid = Recebimentos.CodPerson_Itr
+LEFT JOIN PrdSrv
+                ON PrdSrv.NumProd_psc = UnidadePer.Prod_unid
+LEFT JOIN ObraBlocoEtapa
+                ON ObraBlocoEtapa.Empresa_obe = UnidadePer.Empresa_unid 
+                AND ObraBlocoEtapa.Obra_obe = UnidadePer.Obra_unid 
+                AND ObraBlocoEtapa.Num_obe = UnidadePer.NumObe_unid
+INNER JOIN fn_ListEmpObr('1|ASCON,1|ASHOT,1|BANHO,1|CAPE0,1|CAPEX,1|CGUIA,1|CONTI,1|ECGFM,1|EDEGT,1|EDETR,1|EDGT0,1|EDMRE,1|EDTR0,1|EGADM,1|EGALU,1|EGAPO,1|EGAUT,1|EGCON,1|EGEM2,1|EGEXP,1|EGFIN,1|EGHFE,1|EGHOB,1|EGHOT,1|EGIAL,1|EGIEM,1|EGIOB,1|EGIOP,1|EGIPT,1|EGLUV,1|EGMAK,1|EGOBR,1|EGPER,1|EGREM,1|EGREV,1|EGSTD,1|EGVEN,1|EMCON,1|EMHOT,1|EMOPE,1|ESTA0,1|ESTAC,1|FPP,1|FPP00,1|INCGM,1|INCON,1|INEMF,1|INJPM,1|LEROY,1|LOESP,1|MALL,1|MERCH,1|PALUG,1|PENER,1|PH2O,1|PLUVA,1|QUIOS,1|RECE0,1|SHOP,1|SHOP0,1|TACEN,1|TACON,1|TAEMP,1|TALIM,1|TALUG,1|TAMAK,1|TAMAS,1|TARME,1|TENER,1|TH2O,1|UNIEG,1|UNIVE', ',')
+               ON  Empresa = Recebimentos.Empresa_Rec
+               AND Obra = Recebimentos.Obra_Rec
+//WHERE Recebimentos.Data BETWEEN '06/01/2020' AND '06/30/2020'
+;
+
+Store Fat_RecebimentoEstacio into [lib://2.Extract/Fat_RecebimentoEstacio.qvd];
+drop table Fat_RecebimentoEstacio ;

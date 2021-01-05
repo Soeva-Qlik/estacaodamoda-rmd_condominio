@@ -1,0 +1,53 @@
+[
+  {
+    "qInfo": {
+      "qId": "b811d68e-2ec0-4e83-a404-929fc96a3803",
+      "qType": "variable"
+    },
+    "qMetaDef": {
+      "isBlueprintItem": true
+    },
+    "qName": "vReceitaRMD",
+    "qNumberPresentation": {
+      "qType": "U",
+      "qnDec": 10,
+      "qUseThou": 0
+    },
+    "qDefinition": "IF(TipoCalculo='SOMA',num(Sum({<$1,$2,$3>}Valor * Multiplicador),'#.##0,00;(#.##0,00)'),\r\nIF(TipoCalculo='PERCENTUAL',num(Sum({<$1,$2,$3,TipoContaDivisão={'Numerador'}>} Valor * Multiplicador)/Sum({<$1,$2,$3,TipoContaDivisão={'Denominador'}>} Valor * Multiplicador),'#.##0,0%;(#.##0,0%)'),\nnum(Sum({<$1,$2,$3>}Valor * Multiplicador),'#.##0;(#.##0)')\n))\n\n\n\n",
+    "tags": []
+  },
+  {
+    "qInfo": {
+      "qId": "b95641a2-5b3b-438b-8de2-ab460c5c2307",
+      "qType": "variable"
+    },
+    "qMetaDef": {
+      "isBlueprintItem": true
+    },
+    "qName": "vReceitaOrcamento",
+    "qNumberPresentation": {
+      "qType": "U",
+      "qnDec": 10,
+      "qUseThou": 0
+    },
+    "qDefinition": "IF(TipoCalculo='SOMA',num(Sum({<$1,$2,$3>}\tValorOrcamento * Multiplicador),'#.##0,00;(#.##0,00)'),\r\nIF(TipoCalculo='PERCENTUAL',num(Sum({<$1,$2,$3,TipoContaDivisão={'Numerador'}>} \tValorOrcamento * Multiplicador)/Sum({<$1,$2,$3,TipoContaDivisão={'Denominador'}>} \tValorOrcamento * Multiplicador),'#.##0,0%;(#.##0,0%)'),\nnum(Sum({<$1,$2,$3>}\tValorOrcamento * Multiplicador),'#.##0;(#.##0)')\n))\n\n\n\n",
+    "tags": []
+  },
+  {
+    "qInfo": {
+      "qId": "f737b195-c0d9-4ece-8ff5-5aa330ca022f",
+      "qType": "variable"
+    },
+    "qMetaDef": {
+      "isBlueprintItem": true
+    },
+    "qName": "sSetMesAcumulado",
+    "qNumberPresentation": {
+      "qType": "U",
+      "qnDec": 10,
+      "qUseThou": 0
+    },
+    "qDefinition": "Mes,MesNumerico={\"<=$(=max(MesNumerico))\"}",
+    "tags": []
+  }
+]

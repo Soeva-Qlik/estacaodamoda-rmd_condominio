@@ -1,0 +1,32 @@
+[
+  {
+    "qProperty": {
+      "qInfo": {
+        "qId": "cf7a9ea0-c299-4f15-b7e7-901013cacfdb",
+        "qType": "appprops"
+      },
+      "qMetaDef": {
+        "isBlueprintItem": true
+      },
+      "sheetTitleBgColor": {
+        "color": "#244062",
+        "index": -1
+      },
+      "sheetTitleGradientColor": {
+        "color": "#508eda",
+        "index": -1
+      },
+      "sheetTitleColor": "#ffffff",
+      "sheetLogoThumbnail": {
+        "qStaticContentUrlDef": {
+          "qUrl": "/appcontent/87bf1eb1-d09e-4aa6-8ee7-d36fb38ae6ce/versão10.png"
+        }
+      },
+      "sheetLogoPosition": "left",
+      "rtl": false,
+      "theme": "sense",
+      "defaultBookmarkId": null
+    },
+    "qChildren": []
+  }
+]

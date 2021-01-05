@@ -1,0 +1,518 @@
+[
+  {
+    "qIsHidden": true,
+    "qIsSystem": true,
+    "qName": "$Field",
+    "qCardinal": 40,
+    "qTags": [
+      "$key",
+      "$hidden",
+      "$system"
+    ],
+    "qSrcTables": []
+  },
+  {
+    "qIsHidden": true,
+    "qIsSystem": true,
+    "qName": "$FieldNo",
+    "qCardinal": 16,
+    "qTags": [
+      "$numeric",
+      "$integer",
+      "$hidden",
+      "$system"
+    ],
+    "qSrcTables": []
+  },
+  {
+    "qIsHidden": true,
+    "qIsSystem": true,
+    "qName": "$Fields",
+    "qCardinal": 4,
+    "qTags": [
+      "$numeric",
+      "$integer",
+      "$hidden",
+      "$system"
+    ],
+    "qSrcTables": []
+  },
+  {
+    "qIsHidden": true,
+    "qIsSystem": true,
+    "qName": "$Info",
+    "qCardinal": 1,
+    "qTags": [
+      "$text",
+      "$ascii",
+      "$hidden",
+      "$system"
+    ],
+    "qSrcTables": []
+  },
+  {
+    "qIsHidden": true,
+    "qIsSystem": true,
+    "qName": "$Rows",
+    "qCardinal": 5,
+    "qTags": [
+      "$numeric",
+      "$integer",
+      "$hidden",
+      "$system"
+    ],
+    "qSrcTables": []
+  },
+  {
+    "qIsHidden": true,
+    "qIsSystem": true,
+    "qName": "$Table",
+    "qCardinal": 5,
+    "qTags": [
+      "$text",
+      "$ascii",
+      "$key",
+      "$hidden",
+      "$system"
+    ],
+    "qSrcTables": []
+  },
+  {
+    "qName": "%LinkLayout",
+    "qCardinal": 367,
+    "qTags": [
+      "$text",
+      "$ascii",
+      "$key"
+    ],
+    "qSrcTables": [
+      "TabLayout",
+      "FatoRMD"
+    ]
+  },
+  {
+    "qName": "1",
+    "qCardinal": 1,
+    "qTags": [
+      "$numeric",
+      "$integer"
+    ],
+    "qSrcTables": [
+      "TabLayout"
+    ]
+  },
+  {
+    "qName": "Ano",
+    "qCardinal": 6,
+    "qTags": [
+      "$numeric",
+      "$integer"
+    ],
+    "qSrcTables": [
+      "TabData"
+    ]
+  },
+  {
+    "qName": "Chave",
+    "qCardinal": 93,
+    "qTags": [
+      "$text",
+      "$ascii"
+    ],
+    "qSrcTables": [
+      "FatoRMD"
+    ]
+  },
+  {
+    "qName": "CodGrupoConta",
+    "qCardinal": 1,
+    "qTags": [
+      "$text",
+      "$ascii"
+    ],
+    "qSrcTables": [
+      "FatoRMD"
+    ]
+  },
+  {
+    "qName": "ComentarioDiferenca",
+    "qCardinal": 5,
+    "qTags": [
+      "$text"
+    ],
+    "qSrcTables": [
+      "TabComentario"
+    ]
+  },
+  {
+    "qName": "Contrato",
+    "qCardinal": 590,
+    "qTags": [
+      "$text",
+      "$ascii"
+    ],
+    "qSrcTables": [
+      "FatoRMD"
+    ]
+  },
+  {
+    "qName": "ContratoDigito",
+    "qCardinal": 10,
+    "qTags": [
+      "$text",
+      "$ascii"
+    ],
+    "qSrcTables": [
+      "FatoRMD"
+    ]
+  },
+  {
+    "qName": "CorFonteNivel1",
+    "qCardinal": 2,
+    "qTags": [
+      "$text",
+      "$ascii"
+    ],
+    "qSrcTables": [
+      "TabLayout"
+    ]
+  },
+  {
+    "qName": "CorNivel1",
+    "qCardinal": 3,
+    "qTags": [
+      "$text",
+      "$ascii"
+    ],
+    "qSrcTables": [
+      "TabLayout"
+    ]
+  },
+  {
+    "qName": "Data",
+    "qCardinal": 789,
+    "qTags": [
+      "$numeric",
+      "$integer",
+      "$timestamp",
+      "$date",
+      "$key"
+    ],
+    "qSrcTables": [
+      "FatoRMD",
+      "TabData"
+    ]
+  },
+  {
+    "qName": "DeparaLuc",
+    "qCardinal": 4,
+    "qTags": [
+      "$text",
+      "$ascii"
+    ],
+    "qSrcTables": [
+      "FatoRMD"
+    ]
+  },
+  {
+    "qName": "FlagAnoAnterior",
+    "qCardinal": 2,
+    "qTags": [
+      "$numeric",
+      "$integer"
+    ],
+    "qSrcTables": [
+      "TabData"
+    ]
+  },
+  {
+    "qName": "FlagAnoAtual",
+    "qCardinal": 2,
+    "qTags": [
+      "$numeric",
+      "$integer"
+    ],
+    "qSrcTables": [
+      "TabData"
+    ]
+  },
+  {
+    "qName": "FlagConta%",
+    "qCardinal": 2,
+    "qTags": [
+      "$numeric",
+      "$integer"
+    ],
+    "qSrcTables": [
+      "TabLayout"
+    ]
+  },
+  {
+    "qName": "FlagContaOriginal",
+    "qCardinal": 1,
+    "qTags": [
+      "$numeric",
+      "$integer"
+    ],
+    "qSrcTables": [
+      "TabLayout"
+    ]
+  },
+  {
+    "qName": "GrupoConta",
+    "qCardinal": 1,
+    "qTags": [
+      "$text",
+      "$ascii"
+    ],
+    "qSrcTables": [
+      "FatoRMD"
+    ]
+  },
+  {
+    "qName": "LinkSubContas",
+    "qCardinal": 16,
+    "qTags": [
+      "$text"
+    ],
+    "qSrcTables": [
+      "TabLayout"
+    ]
+  },
+  {
+    "qName": "Luc",
+    "qCardinal": 864,
+    "qTags": [
+      "$text",
+      "$ascii"
+    ],
+    "qSrcTables": [
+      "FatoRMD"
+    ]
+  },
+  {
+    "qName": "Mes",
+    "qCardinal": 12,
+    "qTags": [
+      "$numeric",
+      "$integer"
+    ],
+    "qSrcTables": [
+      "TabData"
+    ]
+  },
+  {
+    "qName": "MesAno",
+    "qCardinal": 51,
+    "qTags": [
+      "$numeric",
+      "$integer",
+      "$timestamp",
+      "$date",
+      "$key"
+    ],
+    "qSrcTables": [
+      "TabData",
+      "TabDataYTD",
+      "TabComentario"
+    ]
+  },
+  {
+    "qName": "MesNumerico",
+    "qCardinal": 12,
+    "qTags": [
+      "$numeric",
+      "$integer"
+    ],
+    "qSrcTables": [
+      "TabData"
+    ]
+  },
+  {
+    "qName": "MesYTD",
+    "qCardinal": 13,
+    "qTags": [
+      "$numeric",
+      "$integer"
+    ],
+    "qSrcTables": [
+      "TabDataYTD"
+    ]
+  },
+  {
+    "qName": "Multiplicador",
+    "qCardinal": 2,
+    "qTags": [
+      "$numeric",
+      "$integer"
+    ],
+    "qSrcTables": [
+      "TabLayout"
+    ]
+  },
+  {
+    "qName": "MultiplicadorCor",
+    "qCardinal": 4,
+    "qTags": [],
+    "qSrcTables": [
+      "TabLayout"
+    ]
+  },
+  {
+    "qName": "NArq",
+    "qCardinal": 3,
+    "qTags": [
+      "$text",
+      "$ascii"
+    ],
+    "qSrcTables": [
+      "FatoRMD"
+    ]
+  },
+  {
+    "qName": "Nivel1",
+    "qCardinal": 27,
+    "qTags": [
+      "$text"
+    ],
+    "qSrcTables": [
+      "TabLayout"
+    ]
+  },
+  {
+    "qName": "Nivel2",
+    "qCardinal": 33,
+    "qTags": [
+      "$text"
+    ],
+    "qSrcTables": [
+      "TabLayout"
+    ]
+  },
+  {
+    "qName": "Nivel3",
+    "qCardinal": 113,
+    "qTags": [
+      "$text"
+    ],
+    "qSrcTables": [
+      "TabLayout"
+    ]
+  },
+  {
+    "qName": "NumeroConta",
+    "qCardinal": 125,
+    "qTags": [
+      "$text",
+      "$ascii"
+    ],
+    "qSrcTables": [
+      "FatoRMD"
+    ]
+  },
+  {
+    "qName": "Ordenacao 1",
+    "qCardinal": 27,
+    "qTags": [],
+    "qSrcTables": [
+      "TabLayout"
+    ]
+  },
+  {
+    "qName": "Ordenacao 2",
+    "qCardinal": 33,
+    "qTags": [
+      "$text"
+    ],
+    "qSrcTables": [
+      "TabLayout"
+    ]
+  },
+  {
+    "qName": "RECNO()",
+    "qCardinal": 1120,
+    "qTags": [
+      "$numeric",
+      "$integer"
+    ],
+    "qSrcTables": [
+      "FatoRMD"
+    ]
+  },
+  {
+    "qName": "TipoCalculo",
+    "qCardinal": 2,
+    "qTags": [
+      "$text",
+      "$ascii"
+    ],
+    "qSrcTables": [
+      "TabLayout"
+    ]
+  },
+  {
+    "qName": "TipoContaDivisão",
+    "qCardinal": 2,
+    "qTags": [
+      "$text",
+      "$ascii"
+    ],
+    "qSrcTables": [
+      "TabLayout"
+    ]
+  },
+  {
+    "qName": "Valor",
+    "qCardinal": 12064,
+    "qTags": [
+      "$numeric",
+      "$integer"
+    ],
+    "qSrcTables": [
+      "FatoRMD"
+    ]
+  },
+  {
+    "qName": "ValorDiferenca",
+    "qCardinal": 5,
+    "qTags": [
+      "$numeric"
+    ],
+    "qSrcTables": [
+      "TabComentario"
+    ]
+  },
+  {
+    "qName": "ValorOrcamento",
+    "qCardinal": 169,
+    "qTags": [
+      "$numeric",
+      "$integer"
+    ],
+    "qSrcTables": [
+      "FatoRMD"
+    ]
+  },
+  {
+    "qName": "ValorRealizado2019",
+    "qCardinal": 105,
+    "qTags": [
+      "$numeric",
+      "$integer"
+    ],
+    "qSrcTables": [
+      "FatoRMD"
+    ]
+  },
+  {
+    "qName": "recno()",
+    "qCardinal": 29673,
+    "qTags": [
+      "$numeric",
+      "$integer"
+    ],
+    "qSrcTables": [
+      "FatoRMD"
+    ]
+  }
+]

@@ -1,0 +1,19 @@
+{
+  "qTitle": "RMD_Condominio",
+  "qLastReloadTime": "2021-01-05T09:26:50.510Z",
+  "qMigrationHash": "504d4e39a7133ee172fbe29aa58348b1e4054149",
+  "qSavedInProductVersion": "12.602.2",
+  "qThumbnail": {
+    "qUrl": "/content/Default/EstacaoDaModa.JPG"
+  },
+  "createdDate": "2020-10-06T14:01:28.964Z",
+  "modifiedDate": "2021-01-05T09:26:51.793Z",
+  "published": true,
+  "publishTime": "2020-11-16T19:22:34.134Z",
+  "description": "",
+  "dynamicColor": "hsla(204,18%,43%,1)",
+  "stream": {
+    "id": "229831b7-e625-42ac-8e4e-c946f4889a5e",
+    "name": "0.Estação"
+  }
+}

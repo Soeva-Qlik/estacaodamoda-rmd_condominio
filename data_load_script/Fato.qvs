@@ -1,0 +1,175 @@
+///$tab Fato
+tempFatoRMD:
+LOAD
+	recno(),
+    Luc,
+    DeparaLuc,
+    GrupoConta,
+    Data,
+    NumeroConta,
+    Valor,
+    %LinkLayout
+FROM
+	[lib://3.Transform/RMD/FatRecebimentoRMD.qvd]
+(qvd);
+
+CONCATENATE(tempFatoRMD)
+LOAD
+	RECNO(),
+    %LinkLayoutComParcela	AS	%LinkLayout,
+    'sem informacao'	AS	Luc,
+    NumeroConta,
+    Data,
+    Valor
+FROM [lib://3.Transform/RMD/FatRecebimentoPorObra.qvd]
+(qvd);
+
+CONCATENATE(tempFatoRMD)
+LOAD
+	recno(),
+    Data,
+    Luc,
+    CodGrupoConta,
+    NumeroConta,
+    Contrato,
+    ContratoDigito,
+    Valor,
+    %LinkLayout
+FROM 
+	[lib://3.Transform/RMD/FatFaturamentoRMD_Hotel.qvd]
+(qvd);
+
+
+CONCATENATE(tempFatoRMD)
+LOAD
+	recno(),
+    "Fornecedor/LUC"	AS	Luc,
+    Data,
+    NumeroConta,
+    Chave,
+    Valor,
+    DeparaLuc,
+    %LinkLayout
+FROM [lib://3.Transform/RMD/FatContasPagasRMD.qvd]
+(qvd);
+
+
+CONCATENATE(tempFatoRMD)
+LOAD
+	RECNO(),
+    Valor,
+	'Sem Informacao' as Luc,
+    Data,
+    NumeroConta,
+    %LinkLayout
+FROM 
+	[lib://3.Transform/RMD/FatSaldoInicialFinal.qvd](qvd)
+WHERE
+	EmpresaCodigo = 4
+;
+
+CONCATENATE(tempFatoRMD)
+LOAD
+	recno(),
+    NumeroConta,
+    %LinkLayout,
+    Data,
+    'Controle Financeiro' as Luc,
+    Valor
+FROM
+	[lib://3.Transform/RMD/FatControleFinanceiroRMD.qvd](qvd)
+WHERE
+	YEAR(Data) >='2017'
+    AND
+    EmpresaCodigo=4
+;
+CONCATENATE(tempFatoRMD)
+LOAD
+	recno(),
+    FileName() as NArq,
+    'Sem Informacao' as Luc,
+    NumeroConta,
+    %LinkLayout,
+    Data,
+    Valor
+FROM 
+	[lib://3.Transform/RMD/FatTrannsferenciasRMD.qvd]
+(qvd);
+CONCATENATE(tempFatoRMD)
+LOAD
+	FileName() as NArq,
+    %LinkLayout,
+    NumeroConta,
+    Data,
+    Valor,
+    Luc
+FROM 
+	[lib://3.Transform/RMD/FatChequeNaoCompensado.qvd](qvd)
+WHERE
+Empresa=4
+;
+
+CONCATENATE(tempFatoRMD)
+LOAD
+    %LinkLayout,
+    Luc,
+    NumeroConta,
+    Data,
+    Valor	as	ValorOrcamento
+FROM
+	[lib://3.Transform/RMD/FatOrcamentoCondominio.qvd]
+(qvd);
+
+CONCATENATE(tempFatoRMD)
+LOAD
+    %LinkLayout,
+    Luc,
+    NumeroConta,
+    Data,
+    Valor as ValorRealizado2019
+FROM [lib://3.Transform/RMD/FatRealizado2019Condominio.qvd]
+(qvd);
+CONCATENATE(tempFatoRMD)
+LOAD
+	FileName() as NArq,
+    %LinkLayout,
+    Data,
+    Conta	AS 	NumeroConta,
+    Luc,
+    Valor
+FROM [lib://3.Transform/RMD/TabEncargosLimitadosRMD.qvd]
+(qvd);
+
+
+
+
+
+
+Rename field Valor to ValorTemp;
+
+//Define se a conta entra negativa ou positiva, caso ela não estejá no excel, o padrão é vir negativo
+MapMultiplicadorConta:
+MAPPING
+LOAD
+    hash128(upper(Chave),trim(text(NumeroConta))),
+    Multiplicador
+FROM [lib://1.Arquivos/Planilha/Descricao Contas_Condominio.xlsx]
+(ooxml, embedded labels, table is Multiplicador);
+
+
+
+
+LEFT KEEP(TabLayout)
+FatoRMD:
+LOAD
+	*,
+    ValorTemp *	ApplyMap('MapMultiplicadorConta',%LinkLayout,1)	as	Valor
+    
+RESIDENT
+	tempFatoRMD
+;
+
+DROP FIELD ValorTemp;
+
+
+DROP TABLE tempFatoRMD;

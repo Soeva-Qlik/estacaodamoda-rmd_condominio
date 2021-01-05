@@ -1,0 +1,39 @@
+///$tab Calendario
+TabData:
+LOAD DISTINCT
+	Data,
+   	MonthName(Data)		AS	MesAno,
+    Month(Data)			AS	Mes,
+    num(Month(Data))	AS	MesNumerico,
+    YEAR(Data)			AS	Ano,
+    IF(YEAR(Data)=YEAR(Today()),1,0)	as	FlagAnoAtual,
+	IF(YEAR(Data)=YEAR(Today())-1,1,0)	as	FlagAnoAnterior
+RESIDENT
+	FatoRMD
+;
+
+TabDataYTD:
+LOAD	DISTINCT
+	MesAno,
+	Mes	as	MesYTD
+RESIDENT
+	TabData
+;
+CONCATENATE(TabDataYTD)
+LOAD	DISTINCT
+	MesAno,
+    dual('YTD',today()+1)	AS	MesYTD
+RESIDENT
+	TabDataYTD
+;
+
+TabComentario:
+LOAD
+    ValorDiferenca,
+    ComentarioDiferenca,
+    MesAno
+FROM
+	[lib://3.Transform/RMD/TabDiferencaComentario.qvd](qvd)
+WHERE
+	    CodEmpresa = 4
+;
